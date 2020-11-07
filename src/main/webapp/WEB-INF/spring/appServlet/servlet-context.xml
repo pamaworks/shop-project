@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc https://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<resources mapping="/resources/**" location="/resources/" />
+	
+	<!--  클라이언트에서 사용가능하기위한 경로설정 -->
+	<resources mapping="/bower_components/**" location="/resources/bower_components/" />
+	<resources mapping="/dist/**" location="/resources/dist/" />
+	<resources mapping="/plugins/**" location="/resources/plugins/" />
+	
+	<resources mapping="/css/**" location="/resources/css/" />
+	<resources mapping="/vendor/**" location="/WEB-INF/views/vendor/" />
+	
+	<resources mapping="/img/**" location="/resources/img/" />
+	<resources mapping="/js/**" location="/resources/js/" />
+	
+	<resources mapping="/ckeditor/**" location="/resources/bower_components/ckeditor/" />
+	<resources mapping="/upload/**" location="/resources/upload/" />
+
+
+	<beans:bean id="authInterceptor" class="com.prinhashop.interceptor.AuthInterceptor"></beans:bean>
+	
+	<!-- 인터셉터 -->
+	<interceptors>
+		<!-- 로그인/쿠키설정 -->
+		<interceptor>
+			<mapping path="/cart/list"/>
+			<mapping path="/order/list"/>
+			<mapping path="/member/myPage"/>
+		
+			
+			<exclude-mapping path="/member/login"/>
+			<exclude-mapping path="/member/logout"/>
+			<beans:ref bean="authInterceptor" />
+		</interceptor>
+	</interceptors>
+
+
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	
+	<!-- 클라이언트로 부터 전송되어 온 파일을 스프링에서 처리하는 기능 -->
+	<!-- MultipartFile file 주입됨 -->
+	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<beans:property name="maxUploadSize" value="10485760" />
+	</beans:bean>
+
+	<!-- 파일 업로드 Path / 경로 -->
+	<beans:bean id="uploadPath" class="java.lang.String">
+		<beans:constructor-arg value="C:\Users\gpfla\Desktop\codeex\worksp\upload"></beans:constructor-arg>
+	</beans:bean>
+	
+	
+	<!-- 썸네일 기능 bean 설정 -->
+	<!-- 추후에 해주기 -->
+	<context:component-scan base-package="com.prinhashop.www" />
+	<context:component-scan base-package="com.prinhashop.persistence" />
+	<context:component-scan base-package="com.prinhashop.domain" />
+	<context:component-scan base-package="com.prinhashop.dto" />
+	<context:component-scan base-package="com.prinhashop.service" />
+	<context:component-scan base-package="com.prinhashop.interceptor" />
+	<context:component-scan base-package="com.prinhashop.util" />
+	
+</beans:beans>

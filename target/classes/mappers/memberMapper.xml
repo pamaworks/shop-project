@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prinhashop.mappers.memberMapper">
+	
+	<!-- 아이디 중복 체크 -->
+	<select id="checkIdJoin" parameterType="String" resultType="String">
+		select mem_id from member_tbl where mem_id = #{mem_id}
+	</select>
+	
+	<!-- 회원가입 -->
+	<insert id="join" parameterType="MemberVO">
+		insert into member_tbl(mem_id, mem_name, mem_pw, mem_email, mem_zipcode, mem_addr, mem_addr_d, mem_phone, mem_nick)
+		values(#{mem_id},#{mem_name},#{mem_pw},#{mem_email},#{mem_zipcode},#{mem_addr},#{mem_addr_d},#{mem_phone},#{mem_nick})	
+	</insert>
+
+
+	<!-- 로그인(MemberDTO) : 비밀번호를 파라미터로 사용하고 있지 않음 / 아이디만 사용 -->
+	<select id="login" parameterType="MemberDTO" resultType="MemberDTO">
+		select mem_id,mem_pw,mem_nick,mem_name,mem_point,mem_last_login
+		from member_tbl
+		where mem_id=#{mem_id}
+	</select>
+	
+	<!-- 로그인 시간 업데이트 -->
+	<update id="loginUpdate" parameterType="String">
+		update member_tbl
+		set mem_last_login=sysdate
+		where mem_id=#{mem_id}
+	</update>
+	
+	<!-- MemberVO 가져오기 -> 회원정보수정시 필요 -->
+	<select id="userInfo" parameterType="String" resultType="MemberVO">
+		select mem_id, mem_name, mem_pw, mem_email, mem_zipcode, mem_addr, mem_addr_d, mem_phone, mem_nick, mem_accept_e, mem_point, mem_regdate, mem_date_up, mem_last_login, mem_authcode
+		from member_tbl
+		where mem_id = #{mem_id}
+	</select>
+
+	<!-- 회원정보수정 -->
+	<update id="modify" parameterType="MemberVO">
+		update member_tbl
+		set mem_name=#{mem_name},mem_email=#{mem_email},mem_zipcode=#{mem_zipcode},mem_addr=#{mem_addr},
+			mem_addr_d=#{mem_addr_d},mem_phone=#{mem_phone},mem_nick=#{mem_nick},mem_date_up=sysdate
+		where mem_id=#{mem_id}
+	</update>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="changePW" parameterType="MemberDTO">
+		update member_tbl
+		set mem_pw=#{mem_pw}
+		where mem_id=#{mem_id}
+	</update>
+
+	<!-- 회원 탈퇴 -->
+	<update id="withdrawal" parameterType="String">
+		delete from member_tbl
+		where mem_id=#{mem_id}
+	</update>
+	
+	<!-- 로그인된 경우 해당 세션id와 유효시간을 사용자 테이블에 세팅한다. -->
+    <update id="keepLogin">
+        update member_tbl set sessionKey = #{sessionId}, sessionLimit = #{next} where mem_id=#{mem_id}
+    </update>
+     
+    <!--  유효기간이 남아 있으면서 해당 sessionId를 가지는 사용자 정보를 꺼내오는 부분 -->
+    <select id="checkUserWithSessionKey" resultType="MemberDTO">
+        select * from member_tbl where sessionKey = #{sessionId} and sessionLimit > sysdate
+    </select>
+
+
+</mapper>

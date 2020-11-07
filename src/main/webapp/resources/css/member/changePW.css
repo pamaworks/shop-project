@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+
+
+
+.community{
+	margin-top: 0.3px;
+}
+
+.form-group > label{
+	font-weight: 700;
+	color:gray;
+	float: left;
+	display: inline-block;
+	padding-top: 7px;
+}
+
+.form-box{
+	text-align: center;
+}
+
+.form-group{
+	clear: both;
+	text-align: left;
+}
+
+
+.form-group > div{
+	width: 100%;
+	padding: 0;
+	float: left;
+	display: inline-block;
+	margin-bottom: 11px;
+}
+
+.form-group > input{
+	display: inline-block;
+	width: 100%;
+}
+
+
+

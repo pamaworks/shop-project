@@ -1,0 +1,41 @@
+/* myPage.jsp css*/
+
+.section-box{
+	height: 750px; background-color: #ebeeef;
+}
+
+.jumbotron{
+	background-color:white;
+	width: 80%;
+	text-align: center;
+	margin: 0 auto;
+	position: relative;
+	top: 17%;
+	height: 500px;
+}
+
+.display-3{
+	color: black;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2.5%;
+}
+
+.section-box .btn-outline-secondary{
+	padding:10px;
+	font-size: 11px;
+	width: 150px;
+	height: 80px;
+	margin:5px;
+}
+
+.button-en{
+	font-weight: 600;
+    color: black;
+    font-size: 13px;
+}
+
+

@@ -1,0 +1,48 @@
+/* checkPW css*/
+
+.section-box{
+	height: 600px; background-color: #ebeeef;
+}
+
+.jumbotron{
+	background-color:white;
+	width: 60%;
+	text-align: center;
+	margin: 0 auto;
+	position: relative;
+	top: 17%;
+	height: 370px;
+}
+
+.display-3{
+	color: black;
+    text-transform: uppercase;
+    line-height: 1.2;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 2.5%;
+}
+
+.jumbotron button{
+	width: 70px;
+	margin-right: 10px;
+}
+
+.button-en{
+    color: white;
+    font-size: 14px;
+}
+
+#mem_pw{
+	border: none;
+	outline: none;
+	border-bottom: solid 1px gray;
+	margin-bottom: 20px;
+	width: 70%;
+}
+
+.form-group{
+	margin-top: 50px;
+}
+

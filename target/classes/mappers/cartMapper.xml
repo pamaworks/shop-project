@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prinhashop.mappers.cartMapper">
+
+	 
+	 <!-- 
+	 	★MERGE문★
+		장바구니 추가 MERGE문 이용
+		
+		삽입 부분을 일괄적으로 한번에 처리하고 싶을 때
+		테이블에 데이터가 있으면  UPDATE, 테이블에 데이터가 없으면 INSERT
+		
+		MERGE INTO [스키마.]테이블명
+			USING (update나 insert될 데이터 원천)
+			ON (update될 조건)
+		WHEN MATCHED THEN
+			SET 컬럼1=값1, 컬럼2=값2, ...
+		WHERE update 조건
+			DELETE WHERE update_delete 조건
+		WHEN NOT MATCHED THEN
+			INSERT (컬럼1, 컬럼2, ... ) VALUES (값1, 값2, ... )
+			WHERE insert 조건; 
+	  -->
+	  
+	  
+	  <!-- 장바구니에 상품 추가 -->
+	 <insert id="addCart" parameterType="CartVO">
+	 	merge into cart_tbl c
+		using dual
+		on (c.mem_id=#{mem_id} and c.pdt_num=#{pdt_num})
+		when matched then
+    		update set cart_amount = cart_amount + #{cart_amount}
+		when not matched then
+    		insert(cart_code, pdt_num, mem_id, cart_amount)
+    		values(cart_code_seq.NEXTVAL, #{pdt_num}, #{mem_id}, #{cart_amount})
+	 </insert>
+	 
+	 <!-- 장바구니 삭제 -->
+	  <delete id="deleteCart" parameterType="int">
+	  	delete from cart_tbl
+		where cart_code=#{cart_code}
+	  </delete>
+	 
+	 <!-- 장바구니 삭제(주문 완료) -->
+	 <delete id="deleteCartOrder" parameterType="Map">
+	 	delete from cart_tbl
+		where pdt_num=#{pdt_num} and mem_id=#{mem_id}
+	 </delete>
+	 
+	 <!-- 장바구니 수량 변경 -->
+	 <update id="updateCart" parameterType="Map">
+	 	update cart_tbl
+		set cart_amount=#{cart_amount}
+		where cart_code=#{cart_code}
+	 </update>
+	 
+	 <!-- 장바구니 목록 가져오기 / 인라인뷰 작업 -->
+	 <select id="getCart" parameterType="String" resultType="CartProductVO">
+	 	<![CDATA[
+	 		select c.cart_code, c.cart_amount, p.pdt_num, p.pdt_name, p.pdt_price, p.pdt_discount, p.pdt_img
+			from(select cart_code, pdt_num, mem_id, cart_amount
+        			from cart_tbl
+        			where mem_id=#{mem_id}) c inner join product_tbl p
+			on c.pdt_num = p.pdt_num
+	 	]]>
+	 </select>
+	 
+
+</mapper>

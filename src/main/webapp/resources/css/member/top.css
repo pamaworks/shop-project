@@ -1,0 +1,89 @@
+/* top.jsp css*/
+
+a { text-decoration:none !important } 
+a:hover { text-decoration:none !important }
+
+
+.main_logo_img{
+   width:30%;
+   text-align: center;
+}
+
+.bar_category{
+	margin:0 10px;
+	color:#444444;
+	font-size:13px;
+	font-weight:500;
+}
+
+.navbar-dark .navbar-toggler{
+	color:white;
+	border-color:white;
+}
+
+.navbar-dark .navbar-toggler-icon{
+	background-image: url("/img/bar_button.png");
+}
+
+.navbar-dark .navbar-nav .nav-link{
+	color:red;
+	margin:0 10px;
+	color:#444444;
+	font-size:13px;
+	font-weight:500;
+}
+
+.navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover{
+	color:red;
+	margin:0 10px;
+	color:#444444;
+	font-size:13px;
+	font-weight:500;
+}
+
+.nav-item.dropdown.shop{
+	margin-top:-4px;
+	margin-right:-7px;
+	
+}
+/*margin-bottom:-7px;*/
+
+
+.nav-item.dropdown.community{
+	margin-top:-5px;
+	margin-left:-1px;
+}
+
+.nav-item.nodrop{
+	margin-right: -1px;
+}
+
+.dropdown-item{
+	font-size:13px;
+	font-weight: 500;
+	color:#444444;
+}
+
+.dropdown-menu.show{
+	margin-bottom:11px;
+}
+	
+.dropdown-menu{
+	margin-bottom: 11px;
+}
+
+
+.drop1:hover .drop2{
+   display:block;   /* .dropdown:hover .dropdown-menu 마우스 커서 올리면 서브메뉴 보이게 하기 */
+}
+
+
+
+@import url(https://fonts.googleapis.com/earlyaccess/jejugothic.css);
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
+
+.navbar a{
+	font-family:'Jeju Gothic' !important;
+	font-weight: 600 !important;
+}

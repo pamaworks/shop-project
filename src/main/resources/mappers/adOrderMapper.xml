@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prinhashop.mappers.adOrderMapper">
+	
+	<!-- 회원 주문 목록/공통 -->
+	<select id="orderInfo" resultType="AdOrderVO">
+		select o.ord_code, m.mem_name, m.mem_id, o.ord_regdate, o.ord_delivery
+		from order_tbl o inner join member_tbl m
+		on o.mem_id = m.mem_id
+		order by o.ord_code desc
+	</select>
+	
+
+	
+	<!-- 검색 조건 쿼리  -->
+	<sql id="search">
+		<if test="searchType != null">
+		
+			<!-- 주문코드 -->
+			<if test="searchType == 'ord_code'.toString()">
+				where  ord_code like '%' || #{keyword} || '%'
+			</if>
+			
+			<!-- 회원아이디 -->
+			<if test="searchType == 'mem_id'.toString()">
+				where om.mem_id like '%' || #{keyword} || '%'
+			</if>			
+			
+			<!-- 회원명 -->
+			<if test="searchType == 'mem_name'.toString()">
+				where om.mem_name like '%' || #{keyword} || '%'
+			</if>	
+							
+		</if>
+	</sql>
+	
+	
+   <!-- 검색 조건 포함 주문 리스트 -->
+   <select id="searchListProduct" parameterType="SearchCriteria" resultType="AdOrderVO">
+      select om.ord_code, om.mem_name, om.mem_id, om.ord_regdate, om.ord_delivery
+      from (select o.ord_code, m.mem_name, m.mem_id, o.ord_regdate, o.ord_delivery,
+            row_number() over(order by o.ord_code desc) p_seq
+            from order_tbl o inner join member_tbl m on o.mem_id = m.mem_id) om
+            <include refid="search"/>
+            <if test="searchType == null">
+      			where om.p_seq between #{rowStart} and #{rowEnd}
+      		</if>
+      		<if test="searchType != null">
+      			and om.p_seq between #{rowStart} and #{rowEnd}
+      		</if>	
+   </select>
+
+	 
+	<!-- 주문 개수(검색조건포함) -->
+	<select id="searchListCount" parameterType="SearchCriteria" resultType="int">
+		<![CDATA[
+			select count(o.ord_code) 
+			from (order_tbl o inner join member_tbl om
+			on o.mem_id = om.mem_id)
+		]]>
+		<include refid="search"/>
+	</select>
+	
+	
+	
+	<!-- 배송상태변경 -->
+	 <update id="delivery" parameterType="Map">
+	 	update order_tbl
+		set ord_delivery=#{ord_delivery}
+		where ord_code=#{ord_code}
+	 </update>
+	
+</mapper>

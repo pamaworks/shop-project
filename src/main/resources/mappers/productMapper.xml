@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prinhashop.mappers.productMapper">
+
+	<!-- 1차 카테고리 출력 -->
+   <select id="mainCGList" resultType="CategoryVO">
+      select cate_code, cate_code_prt, cate_name
+      from category_tbl
+      where cate_code_prt is null
+   </select>
+   
+   <!-- 2차 카테고리코드의 1차 카테고리 코드 출력 -->
+   <select id="mainCGCode" parameterType="String" resultType="String">
+   		select cate_code_prt
+		from category_tbl
+		where cate_code=#{cate_code}
+   </select>
+   
+   <!-- 2차 카테고리 출력 -->
+   <select id="subCGList" parameterType="String" resultType="CategoryVO">
+      select cate_code, cate_code_prt, cate_name
+      from category_tbl                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+      where cate_code_prt = #{cate_code}
+   </select>
+   
+   <!-- 카테고리 코드에 해당하는 카테고리명 -->
+   <select id="getCGName" parameterType="String" resultType="String">
+      select cate_name
+      from category_tbl
+      where cate_code = #{cate_code}
+   </select>
+   
+   <!-- 2차 카테고리에 해당하는 상품리스트 출력(페이지에 맞춰서) -->
+   <select id="productListCG" parameterType="Map" resultType="ProductVO">
+   		select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+        		pdt_company, pdt_content, pdt_img, pdt_amount, pdt_buy, 
+        		pdt_date, pdt_date_up
+		from (select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+           			pdt_company, pdt_content, pdt_img, pdt_amount, pdt_buy, 
+        			pdt_date, pdt_date_up, row_number() over(order by pdt_num desc) p_seq
+    			from product_tbl
+        		where cate_code=#{cate_code})
+		where p_seq between #{rowStart} and #{rowEnd} 
+   </select>
+
+   <!-- 해당하는 2차 카테고리의 상품 개수 -->
+   <select id="productCount" parameterType="String" resultType="int">
+   		select count(pdt_num)
+		from product_tbl
+		where cate_code=#{cate_code}
+   </select>
+
+	<!-- 1차 카테고리의 All 상품 개수 출력 -->
+	<select id="productCountAll" parameterType="String" resultType="int">
+		select count(pdt_num)
+		from product_tbl
+		where cate_code in (select cate_code
+                    		from category_tbl
+                    		where cate_code_prt = #{cate_code_prt})
+	</select>
+   
+
+   
+   <!-- 1차 카테고리에 의한 2차 카테고리의 cate_code 가져오기 -->
+   <select id="getCGCode" parameterType="String" resultType="String">
+    select cate_code
+	from product_tbl
+	where cate_code in(select cate_code
+      					from category_tbl                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+      					where cate_code_prt = #{cate_code})
+   </select>
+
+	<!-- 카테고리 코드 체크 : 1차인지? 2차인지?-->
+	<select id="cateCodeCheck" parameterType="String" resultType="int">
+		select count(*)
+		from category_tbl
+		where cate_code_prt = #{cate_code}
+	</select>
+	
+	
+	<!-- 해당 검색 조건에 맞는 상품리스트(페이지에 맞추기) -->
+	<select id="productListSearch" parameterType="SearchCriteria" resultType="ProductVO">
+		select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+				pdt_company, PDT_CONTENT, pdt_img, pdt_amount, pdt_buy, 
+				pdt_date, pdt_date_up
+		from (select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+                pdt_company, PDT_CONTENT, pdt_img, pdt_amount, pdt_buy, 
+                pdt_date, pdt_date_up, row_number() over(order by pdt_num desc) p_seq
+            from product_tbl
+			where (pdt_name like '%' || #{keyword} || '%')
+			or (PDT_CONTENT like '%' || #{keyword} || '%')
+        	)
+		where p_seq between #{rowStart} and #{rowEnd}
+	</select>
+	
+	<!-- 해당 검색조건에 해당하는 상품 개수 -->
+	<select id="productCountSearch" parameterType="String" resultType="int">
+		select count(pdt_num)
+		from product_tbl
+		where (pdt_name like '%' || #{keyword} || '%')
+		or (pdt_content like '%' || #{keyword} || '%')
+	</select>
+	
+	
+	<!-- 1차카테고리(부모)에 의한 2차 카테고리의 모든 상품 출력 -->
+	<select id="allProductListCG" parameterType="Map" resultType="ProductVO">
+   	select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+   		pdt_company, pdt_content, pdt_img, pdt_amount, pdt_buy, 
+       	pdt_date, pdt_date_up
+	from (select pdt_num, cate_code, pdt_name, pdt_price, pdt_discount, 
+           			pdt_company, pdt_content, pdt_img, pdt_amount, pdt_buy, 
+        			pdt_date, pdt_date_up, row_number() over(order by pdt_num desc) p_seq
+        	from product_tbl
+       		where cate_code in(select cate_code
+                            	from category_tbl                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                            	where cate_code_prt = #{cate_code_prt}))
+	where p_seq between #{rowStart} and #{rowEnd}
+   </select>
+	
+	<!-- 상품 상세정보  읽기 -->
+	<select id="readProduct" parameterType="int" resultType="ProductVO">
+		select pdt_num, cate_code, cate_code_prt, pdt_name, pdt_price, pdt_discount, pdt_company, pdt_content, pdt_img, pdt_amount, pdt_buy, pdt_date, pdt_date_up
+		from product_tbl
+		where pdt_num=#{pdt_num}
+	</select>
+	
+	
+	
+</mapper>

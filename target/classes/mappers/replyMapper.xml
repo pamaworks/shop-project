@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.prinhashop.mappers.replyMapper">
+	
+	<!-- 댓글 추가 -->
+	<insert id="addReply" parameterType="ReplyVO">
+		insert into reply_tbl(rno, bno, reply_text, replyer, reply_regdate)
+		values (rno_seq.nextval, #{bno}, #{reply_text},#{replyer},sysdate)
+	</insert>
+
+	<!-- 댓글 리스트 -->
+	<select id="list" resultType="ReplyVO">
+		select
+		*
+		from
+		reply_tbl
+		where bno = #{bno}
+		order by rno desc
+	</select>
+	
+	<!-- 댓글 수정 -->
+	<update id="modify" parameterType="ReplyVO">
+		update reply_tbl
+		set reply_text=#{reply_text},reply_regdate=sysdate
+		where rno = #{rno}
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="delete" parameterType="int">
+		delete from reply_tbl where rno = #{rno}
+	</delete>
+
+	<!-- 댓글번호로 글번호 알아내기 -->
+	<select id="getBno" parameterType="int" resultType="int">
+		select bno from reply_tbl where rno=#{rno}
+	</select>
+	
+	<!-- 페이징을 포함한 댓글 리스트 -->
+	<select id="listPage" parameterType="Map" resultType="ReplyVO">
+		select *
+		from(select rno, bno, reply_text, replyer, reply_regdate,
+    		row_number() over (order by rno desc) as seq_rno
+    		from reply_tbl where bno=#{bno})ds
+		where seq_rno between #{cri.rowStart} and #{cri.rowEnd}
+	</select>
+	
+	<!-- 글번호별 댓글 개수 -->
+	<select id="count" parameterType="int" resultType="int">
+		select count(rno)
+		from reply_tbl
+		where bno=#{bno}
+	</select>
+	
+	
+</mapper>
